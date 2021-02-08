@@ -1,0 +1,32 @@
+extensions:
+  health_check:
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:55680
+
+processors:
+  batch:
+
+exporters:
+  logging:
+    loglevel: debug
+  otlp:
+    endpoint: "ingest.lightstep.com:443"
+    headers:
+      "lightstep-access-token": TOKEN
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [otlp, logging]
+    metrics:
+      receivers: [otlp]
+      exporters: [otlp, logging]
+
+  extensions: [pprof]
